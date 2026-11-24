@@ -12,7 +12,6 @@ uint32_t mux4067_vals[MUX_COUNT] = {0};
 uint32_t mux4067_vals_db[MUX_COUNT] = {0};  // debounced
 
 // debouncing helper arrays
-uint32_t mux4067_vals_last[MUX_COUNT] = {0};
 uint32_t press_ts[MUX_COUNT][32] = {0};
 uint32_t release_ts[MUX_COUNT][32] = {0};
 
@@ -142,23 +141,21 @@ void mux4067_debounce() {
         for (int i = 0; i < 32; i++) {
             uint32_t state = GETBIT(mux4067_vals[mux], i);
             
-            if (state != (GETBIT(mux4067_vals_last[mux], i))) {
-                // button state has changed
-                if (state) {
+            if (state) {
+                release_ts[mux][i] = current_ts;
+                if (!GETBIT(mux4067_vals_db[mux], i)) {
+                    // Register press immediately on leading edge (0ms added press latency)
+                    SETBIT(mux4067_vals_db[mux], i);
                     press_ts[mux][i] = current_ts;
-                } else {
-                    release_ts[mux][i] = current_ts;
                 }
-            } else if (state && (current_ts - press_ts[mux][i]) >= DEBOUNCE_PRESS_TIME) {
-                // check if the button has been held for debounce time
-                SETBIT(mux4067_vals_db[mux], i); // set debounced button state
-            } else if (!state && (current_ts - release_ts[mux][i]) >= DEBOUNCE_RELEASE_TIME) {
+            } else if (GETBIT(mux4067_vals_db[mux], i) &&
+                       (current_ts - press_ts[mux][i]) >= DEBOUNCE_PRESS_TIME &&
+                       (current_ts - release_ts[mux][i]) >= DEBOUNCE_RELEASE_TIME) {
                 CLRBIT(mux4067_vals_db[mux], i);
             }
         }
-        mux4067_vals_last[mux] = mux4067_vals[mux]; // store current button state for next iteration
     }
     #else
-    memcpy(mux4067_vals_db, mux4067_vals, MUX_COUNT);
+    memcpy(mux4067_vals_db, mux4067_vals, sizeof(mux4067_vals));
     #endif
 }
