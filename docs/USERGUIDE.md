@@ -101,7 +101,7 @@ You may be using the wrong IDC cables, or you have a grounding issue affecting y
 If nothing is happening, make sure you are on the correct mode for your system.
 
 **1P and 2P pad lights are swapped for ITG dedicabs**
-Enter config mode, then press the 1P and 2P menu select buttons (the bottom ones) simultaneously.  This will swap the 1P and 2P pad lights for LXIO and gamepad modes (PIUIO mode should not have the lights swapped).  Repeat this process to swap back.
+Enter config mode, then press the 1P and 2P up panels simultaneously. The pad lights will turn on in order from 1P Left all the way to 2P Right (`1P Left → 1P Down → 1P Up → 1P Right → 2P Left → 2P Down → 2P Up → 2P Right`) to confirm the current orientation. This swaps the 1P and 2P pad lights for LXIO and gamepad modes (PIUIO mode should not have the lights swapped). Repeat this process to swap back.
 
 ## FAQ/Notes
 
