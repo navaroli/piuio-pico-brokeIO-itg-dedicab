@@ -23,8 +23,10 @@ struct inputArray {
             uint8_t p1_ur : 1;
             uint8_t p1_cn : 1;
             uint8_t p1_dl : 1;
-            uint8_t p1_dr : 1;
-            uint8_t empty1 : 3;
+            uint8_t p1_dr : 1;      // Menu start for ITG dedicab.
+            uint8_t p1_select : 1;  // Specific to ITG dedicab.
+            uint8_t p1_menu_l : 1;  // Specific to ITG dedicab.
+            uint8_t p1_menu_r : 1;  // Specific to ITG dedicab.
 
             // p1 input byte 1
             uint8_t empty2 : 1;
@@ -39,8 +41,10 @@ struct inputArray {
             uint8_t p2_ur : 1;
             uint8_t p2_cn : 1;
             uint8_t p2_dl : 1;
-            uint8_t p2_dr : 1;
-            uint8_t empty4 : 3;
+            uint8_t p2_dr : 1;      // Menu start for ITG dedicab.
+            uint8_t p2_select : 1;  // Specific to ITG dedicab.
+            uint8_t p2_menu_l : 1;  // Specific to ITG dedicab.
+            uint8_t p2_menu_r : 1;  // Specific to ITG dedicab.
 
             // p2 input byte 3
             uint8_t empty5 : 2;
@@ -83,7 +87,9 @@ struct lightsArray {
             uint8_t r1_halo : 1;
             uint8_t l2_halo : 1;
             uint8_t l1_halo : 1;
-            uint8_t empty5 : 3;
+            uint8_t empty4 : 1;
+            uint8_t coin_pulse : 1;
+            uint8_t empty5 : 1;
             uint8_t r1_halo_dupe : 1;
             uint8_t r2_halo_dupe : 1;
 
