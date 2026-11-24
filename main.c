@@ -270,6 +270,12 @@ void config_mode_led_update(uint32_t* buf) {
 }
 
 void lights_task() {
+    if (auto_mux || config_mode) {
+        current_mux = (current_mux + 1) % 4;
+        lights.p1_mux = current_mux;
+        lights.p2_mux = current_mux;
+    }
+
     #ifdef ENABLE_WS2812_SUPPORT
     ws2812_lock_mtx();
     #endif
@@ -366,12 +372,6 @@ void lights_task() {
     #ifdef ENABLE_WS2812_SUPPORT
     ws2812_unlock_mtx();
     #endif
-
-    if (auto_mux || config_mode) {
-        current_mux = (current_mux + 1) % 4;
-        lights.p1_mux = current_mux;
-        lights.p2_mux = current_mux;
-    }
 }
 
 void receive_report(uint8_t *buffer) {
