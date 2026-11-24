@@ -186,8 +186,8 @@ typedef struct __attribute((packed, aligned(1))) LXIOOutputReport {
             uint32_t empty7 : 24;
             // bytes 9-12
             uint32_t empty8 : 32;
-            // bytes 13-16
-            uint32_t empty9 : 32;
+            // bytes 13-15
+            uint32_t empty9 : 24;
         };
     };
 } LXIOOutputReport_t;

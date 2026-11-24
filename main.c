@@ -225,7 +225,7 @@ void input_task() {
         } else if ((!input.p1_dr && last_input.p1_dr) || (!input.p2_dr && last_input.p2_dr)) {
             if (config_tmp.input_mode < INPUT_MODE_COUNT - 1)
                 config_tmp.input_mode++;
-        } else if ((!input.test && last_input.test) || (!input.test && last_input.test)) {
+        } else if (!input.test && last_input.test) {
             config_tmp.input_mode = (config_tmp.input_mode + 1) % INPUT_MODE_COUNT;
         }
 
@@ -313,6 +313,12 @@ void config_mode_led_update(uint32_t* buf) {
 }
 
 void lights_task() {
+    if (auto_mux || config_mode) {
+        current_mux = (current_mux + 1) % 4;
+        lights.p1_mux = current_mux;
+        lights.p2_mux = current_mux;
+    }
+
     #ifdef ENABLE_WS2812_SUPPORT
     ws2812_lock_mtx();
     #endif
@@ -437,12 +443,6 @@ void lights_task() {
     #ifdef ENABLE_WS2812_SUPPORT
     ws2812_unlock_mtx();
     #endif
-
-    if (auto_mux || config_mode) {
-        current_mux = (current_mux + 1) % 4;
-        lights.p1_mux = current_mux;
-        lights.p2_mux = current_mux;
-    }
 }
 
 void receive_report(uint8_t *buffer) {
@@ -667,6 +667,9 @@ const usbd_class_driver_t *usbd_app_driver_get_cb(uint8_t *driver_count)
         *driver_count = 1;
         return &xinput_driver;
     }
+
+    *driver_count = 0;
+    return NULL;
 }
 
 bool tud_vendor_control_xfer_cb(uint8_t rhport, uint8_t stage, tusb_control_request_t const * request) {
@@ -694,10 +697,13 @@ bool tud_vendor_control_xfer_cb(uint8_t rhport, uint8_t stage, tusb_control_requ
                         return false;
                     if (stage == CONTROL_STAGE_SETUP)
                         return tud_control_xfer(rhport, request, (void *)&temp_lights.data, sizeof(temp_lights.data));
-                    if (stage == CONTROL_STAGE_DATA)
+                    if (stage == CONTROL_STAGE_DATA) {
                         memcpy(&lights.data, &temp_lights.data, sizeof(temp_lights.data));
+                        return true;
+                    }
                     if (stage == CONTROL_STAGE_ACK)
                         return true;
+                    return false;
 
                 case TUSB_DIR_IN:  // input
 
@@ -738,7 +744,10 @@ uint16_t tud_hid_get_report_cb(uint8_t itf, uint8_t report_id, hid_report_type_t
 
     if (size == 0 || report == NULL)
         return 0;
-        
+
+    if (size > reqlen)
+        size = reqlen;
+
     memcpy(buffer, report, size);
 
     return size;
@@ -756,6 +765,9 @@ void tud_hid_set_report_cb(uint8_t instance, uint8_t report_id, hid_report_type_
             lxio_set_report(buffer, bufsize, &lights);
         } else if (get_config()->input_mode == INPUT_MODE_GAMECUBE) {
             // rumble
+        } else if (get_config()->input_mode == INPUT_MODE_GAMEPAD) {
+            direct_lights = false;
+            hid_set_report(buffer, bufsize, &lights);
         }
     }
 }
