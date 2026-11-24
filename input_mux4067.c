@@ -15,6 +15,9 @@ uint32_t mux4067_vals_db[MUX_COUNT] = {0};  // debounced
 uint32_t press_ts[MUX_COUNT][32] = {0};
 uint32_t release_ts[MUX_COUNT][32] = {0};
 
+extern bool merge_mux;
+extern bool config_mode;
+
 #define MUX_P1_INPUTS_SIZE 5
 const uint8_t mux_p1_inputs[] = {
     MUX4067_P1_UPLEFT,
@@ -136,10 +139,13 @@ uint32_t mux4067_merged(uint32_t* vals) {
 void mux4067_debounce() {
     #if defined(DEBOUNCING)
     uint32_t current_ts = board_millis();
+    uint32_t raw_merged = mux4067_merged(mux4067_vals);
+    bool merged_hold = (merge_mux || config_mode);
     
     for (int mux = 0; mux < MUX_COUNT; mux++) {
         for (int i = 0; i < 32; i++) {
             uint32_t state = GETBIT(mux4067_vals[mux], i);
+            uint32_t any_sensor_active = merged_hold ? GETBIT(raw_merged, i) : state;
             
             if (state) {
                 release_ts[mux][i] = current_ts;
@@ -148,6 +154,9 @@ void mux4067_debounce() {
                     SETBIT(mux4067_vals_db[mux], i);
                     press_ts[mux][i] = current_ts;
                 }
+            } else if (any_sensor_active && GETBIT(mux4067_vals_db[mux], i)) {
+                // Keep release timer refreshed while another sensor on the same panel is active
+                release_ts[mux][i] = current_ts;
             } else if (GETBIT(mux4067_vals_db[mux], i) &&
                        (current_ts - press_ts[mux][i]) >= DEBOUNCE_PRESS_TIME &&
                        (current_ts - release_ts[mux][i]) >= DEBOUNCE_RELEASE_TIME) {
