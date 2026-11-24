@@ -101,7 +101,7 @@ You may be using the wrong IDC cables, or you have a grounding issue affecting y
 If nothing is happening, make sure you are on the correct mode for your system.
 
 **1P and 2P pad lights are swapped for ITG dedicabs**
-Enter config mode, then press the 1P and 2P up panels (or 1P and 2P up-left panels on PIU pads) simultaneously. The pad lights will sweep from 1P Left to 2P Right so you can confirm they are in the right order. This swaps the 1P and 2P pad lights for non-PIUIO modes (PIUIO mode should not have the lights swapped). Repeat this process to swap back.
+Enter config mode, then press the 1P and 2P up panels simultaneously. The pad lights will turn on in order from 1P Left all the way to 2P Right (`1P Left → 1P Down → 1P Up → 1P Right → 2P Left → 2P Down → 2P Up → 2P Right`) to confirm the current orientation. This swaps the 1P and 2P pad lights for LXIO and gamepad modes (PIUIO mode should not have the lights swapped). Repeat this process to swap back.
 
 ## FAQ/Notes
 
@@ -122,7 +122,7 @@ The 12V line should accept anything between 5V and 12V, if you would prefer to o
 This is not implemented yet but is a work in progress currently.
 
 **Can I use my button board with brokeIO?**
-This is also not implemented yet but is a work in progress currently.
+ITG dedicab button boards are now supported.  PIU button board support is also not implemented yet but is a work in progress currently.
 
 ## Resources
 
