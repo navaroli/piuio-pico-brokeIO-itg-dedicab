@@ -83,7 +83,7 @@ you are not able to plug in the brokeIO to a complete setup.
 To select a mode, choose with the down left and down right arrows of either pad, or use the test button. To exit the
 config mode, hold the service button for two seconds, and the brokeIO will save your settings and reset.
 
-To update the firmware, in config mode, hold P2 up left, up right and down right simultaneously. Alternatively, while
+To update the firmware, in config mode, hold P2 up left, up right and down right simultaneously. For ITG dedicabs, instead hold 2P up, down, and start simultaneously. Alternatively, while
 holding the BOOT button, either plug in the brokeIO or press the RESET button if plugged in already. A storage device
 called RPI-RP2 will show up on the host computer, and you can drag or copy the .UF2 firmware file into the drive, which
 will automatically upload and flash the brokeIO.
@@ -100,10 +100,13 @@ In addition, make sure that the IDC cables are firmly connected between the brok
 You may be using the wrong IDC cables, or you have a grounding issue affecting your machine or power supply.
 If nothing is happening, make sure you are on the correct mode for your system.
 
+**1P and 2P pad lights are swapped for ITG dedicabs**
+Enter config mode, then press the 1P and 2P up panels (or 1P and 2P up-left panels on PIU pads) simultaneously. The pad lights will sweep from 1P Left to 2P Right so you can confirm they are in the right order. This swaps the 1P and 2P pad lights for non-PIUIO modes (PIUIO mode should not have the lights swapped). Repeat this process to swap back.
+
 ## FAQ/Notes
 
 **How do I reprogram the board?**
-Hold the BOOT button when plugging in the brokeIO or pressing the RESET button. You do not need to plug in the Molex power cable to follow these steps, only the USB cable is needed. Alternatively, if you don't have physical access to the buttons and the brokeIO is plugged in, enter the config menu with the service button and press P2 UL+UR+DR.
+Hold the BOOT button when plugging in the brokeIO or pressing the RESET button. You do not need to plug in the Molex power cable to follow these steps, only the USB cable is needed. Alternatively, if you don't have physical access to the buttons and the brokeIO is plugged in, enter the config menu with the service button and press P2 UL+UR+DR (for ITG dedicabs press P2 UP+DOWN+START).
 Then the device should show up as a flash drive called RPI-BOOT. Finally, you can drop the UF2 firmware file in the flash drive and it will upload the code automatically.
 
 **Can I wire lights directly to this?**
