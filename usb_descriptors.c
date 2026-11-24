@@ -164,6 +164,7 @@ uint16_t const* tud_descriptor_string_cb(uint8_t index, uint16_t langid)
     (void) langid;
 
     uint8_t chr_count;
+    uint8_t desc_count;
 
     const char** string_desc_arr;
 
@@ -171,34 +172,42 @@ uint16_t const* tud_descriptor_string_cb(uint8_t index, uint16_t langid)
     {
         case INPUT_MODE_GAMEPAD:
             string_desc_arr = (const char**)hid_string_descriptors;
+            desc_count = sizeof(hid_string_descriptors) / sizeof(hid_string_descriptors[0]);
             break;
 
         case INPUT_MODE_LXIO:
             string_desc_arr = (const char**)lxio_string_descriptors;
+            desc_count = sizeof(lxio_string_descriptors) / sizeof(lxio_string_descriptors[0]);
             break;
 
         case INPUT_MODE_KEYBOARD:
             string_desc_arr = (const char**)keyboard_string_descriptors;
+            desc_count = sizeof(keyboard_string_descriptors) / sizeof(keyboard_string_descriptors[0]);
             break;
 
         case INPUT_MODE_XINPUT:
             string_desc_arr = (const char**)xinput_string_descriptors;
+            desc_count = sizeof(xinput_string_descriptors) / sizeof(xinput_string_descriptors[0]);
             break;
 
         case INPUT_MODE_SWITCH:
             string_desc_arr = (const char**)switch_string_descriptors;
+            desc_count = sizeof(switch_string_descriptors) / sizeof(switch_string_descriptors[0]);
             break;
 
         case INPUT_MODE_GAMECUBE:
             string_desc_arr = (const char**)gamecube_string_descriptors;
+            desc_count = sizeof(gamecube_string_descriptors) / sizeof(gamecube_string_descriptors[0]);
             break;
 
 		case INPUT_MODE_SERIAL:
             string_desc_arr = (const char**)serial_string_descriptors;
+            desc_count = sizeof(serial_string_descriptors) / sizeof(serial_string_descriptors[0]);
             break;
 
         default:
             string_desc_arr = (const char**)piuio_string_descriptors;
+            desc_count = sizeof(piuio_string_descriptors) / sizeof(piuio_string_descriptors[0]);
             break;
     }
 
@@ -211,7 +220,7 @@ uint16_t const* tud_descriptor_string_cb(uint8_t index, uint16_t langid)
         // Note: the 0xEE index string is a Microsoft OS 1.0 Descriptors.
         // https://docs.microsoft.com/en-us/windows-hardware/drivers/usbcon/microsoft-defined-usb-descriptors
 
-        //if ( !(index < sizeof(string_desc_arr)/sizeof(string_desc_arr[0])) ) return NULL;
+        if ( !(index < desc_count) ) return NULL;
 
         const char* str = string_desc_arr[index];
 
