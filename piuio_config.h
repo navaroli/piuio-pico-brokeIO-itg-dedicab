@@ -15,8 +15,8 @@
 
 // debounce time in milliseconds
 // adjust if you are getting misfires!
-#define DEBOUNCE_PRESS_TIME 15
-#define DEBOUNCE_RELEASE_TIME 25
+#define DEBOUNCE_PRESS_TIME 5
+#define DEBOUNCE_RELEASE_TIME 15
 
 // enable debouncing
 #define DEBOUNCING
