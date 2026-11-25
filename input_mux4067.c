@@ -12,6 +12,7 @@ uint32_t mux4067_vals[MUX_COUNT] = {0};
 uint32_t mux4067_vals_db[MUX_COUNT] = {0};  // debounced
 
 // debouncing helper arrays
+uint32_t mux4067_vals_last[MUX_COUNT] = {0};
 uint32_t press_ts[MUX_COUNT][32] = {0};
 uint32_t release_ts[MUX_COUNT][32] = {0};
 
@@ -145,23 +146,24 @@ void mux4067_debounce() {
     for (int mux = 0; mux < MUX_COUNT; mux++) {
         for (int i = 0; i < 32; i++) {
             uint32_t state = GETBIT(mux4067_vals[mux], i);
-            uint32_t any_sensor_active = merged_hold ? GETBIT(raw_merged, i) : state;
+            uint32_t eff_state = (merged_hold && GETBIT(mux4067_vals_db[mux], i))
+                                 ? GETBIT(raw_merged, i)
+                                 : state;
             
-            if (state) {
-                release_ts[mux][i] = current_ts;
-                if (!GETBIT(mux4067_vals_db[mux], i)) {
-                    // Register press immediately on leading edge (0ms added press latency)
-                    SETBIT(mux4067_vals_db[mux], i);
+            if (eff_state != GETBIT(mux4067_vals_last[mux], i)) {
+                // button state has changed
+                if (eff_state) {
                     press_ts[mux][i] = current_ts;
+                } else {
+                    release_ts[mux][i] = current_ts;
                 }
-            } else if (any_sensor_active && GETBIT(mux4067_vals_db[mux], i)) {
-                // Keep release timer refreshed while another sensor on the same panel is active
-                release_ts[mux][i] = current_ts;
-            } else if (GETBIT(mux4067_vals_db[mux], i) &&
-                       (current_ts - press_ts[mux][i]) >= DEBOUNCE_PRESS_TIME &&
-                       (current_ts - release_ts[mux][i]) >= DEBOUNCE_RELEASE_TIME) {
+            } else if (eff_state && (current_ts - press_ts[mux][i]) >= DEBOUNCE_PRESS_TIME) {
+                // check if the button has been held for debounce press time (5ms)
+                SETBIT(mux4067_vals_db[mux], i);
+            } else if (!eff_state && (current_ts - release_ts[mux][i]) >= DEBOUNCE_RELEASE_TIME) {
                 CLRBIT(mux4067_vals_db[mux], i);
             }
+            SETORCLRBIT(mux4067_vals_last[mux], i, eff_state);
         }
     }
     #else
